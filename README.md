@@ -1,5 +1,253 @@
 # 对GO 主流框架 和 Rust的actix web进行Pressure Test对比
 
+
+
+开始我们的Pressure Test
+## 环境：
+MacBook Pro (15-inch, 2017)
+CPU: 3.1 GHz Intel Core i7
+Mem: 16 GB 2133 MHz LPDDR3
+
+### 1. Go gin Framework
+Run
+```shell
+$ go run hello-world/main_gin.go 
+```
+Test
+```shell
+$ curl -i http://localhost:8080
+HTTP/1.1 200 OK
+Date: Sat, 08 Feb 2020 07:48:12 GMT
+Content-Length: 11
+Content-Type: text/plain; charset=utf-8
+
+Hello World%
+```
+Pressure Test
+```shell
+$ wrk -d 100s -c 1000 -t 8 http://localhost:8080
+Running 2m test @ http://localhost:8080
+  8 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    17.33ms    3.39ms  90.62ms   83.61%
+    Req/Sec     6.97k   773.90    12.75k    77.71%
+  5547468 requests in 1.67m, 677.18MB read
+  Socket errors: connect 0, read 848, write 8, timeout 0
+Requests/sec:  55417.42
+Transfer/sec:      6.76MB
+```
+CPU: 260% - 330% 内存: 30m
+
+
+
+### 2. Go iris Framework
+Run
+```shell
+$ go run hello-world/main_iris.go 
+```
+Test
+```shell
+$ curl -i http://localhost:8080
+HTTP/1.1 200 OK
+Date: Sat, 08 Feb 2020 07:51:49 GMT
+Content-Length: 11
+Content-Type: text/plain; charset=utf-8
+
+Hello World%
+```
+Pressure Test
+```shell
+$ wrk -d 100s -c 1000 -t 8 http://localhost:8080
+Running 2m test @ http://localhost:8080
+  8 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    17.24ms    3.53ms  68.91ms   83.17%
+    Req/Sec     6.98k   785.89    11.66k    78.38%
+  5558509 requests in 1.67m, 678.53MB read
+  Socket errors: connect 0, read 925, write 0, timeout 0
+Requests/sec:  55542.67
+Transfer/sec:      6.78MB
+```
+CPU: 260% - 332% 内存：33m
+
+### 3. Go echo Framework
+Run
+```shell
+$ go run hello-world/main_echo.go 
+```
+Test
+```curl -i http://localhost:8080
+HTTP/1.1 200 OK
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 08 Feb 2020 07:55:32 GMT
+Content-Length: 11
+
+Hello World%
+```
+Pressure Test
+```shell
+$ wrk -d 100s -c 1000 -t 8 http://localhost:8080
+Running 2m test @ http://localhost:8080
+  8 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    17.50ms    3.72ms 113.97ms   85.23%
+    Req/Sec     6.87k   835.97    11.97k    75.54%
+  5466944 requests in 1.67m, 667.35MB read
+  Socket errors: connect 0, read 915, write 0, timeout 0
+Requests/sec:  54616.08
+Transfer/sec:      6.67MB
+```
+CPU: 290% - 340% 内存： 29m
+
+### 3. Go chi Framework
+Run
+```shell
+$ go run hello-world/main_chi.go 
+```
+Test
+```shell
+$ curl -i http://localhost:8080
+HTTP/1.1 200 OK
+Date: Sat, 08 Feb 2020 07:58:43 GMT
+Content-Length: 11
+Content-Type: text/plain; charset=utf-8
+
+Hello World%
+```
+Pressure Test
+```shell
+$ wrk -d 100s -c 1000 -t 8 http://localhost:8080
+Running 2m test @ http://localhost:8080
+  8 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    17.13ms    3.34ms  78.01ms   84.38%
+    Req/Sec     7.02k   725.59    11.73k    80.36%
+  5590349 requests in 1.67m, 682.42MB read
+  Socket errors: connect 0, read 933, write 0, timeout 0
+Requests/sec:  55867.91
+Transfer/sec:      6.82MB
+```
+CPU:  内存: 28m
+
+### 4. Go restful Framework
+Run
+```shell
+$ go run hello-world/main_restful.go 
+```
+Test
+```shell
+$ curl -i http://localhost:8080
+HTTP/1.1 200 OK
+Date: Sat, 08 Feb 2020 08:01:33 GMT
+Content-Length: 11
+Content-Type: text/plain; charset=utf-8
+
+Hello World%
+```
+Pressure Test
+```shell
+$ wrk -d 100s -c 1000 -t 8 http://localhost:8080
+Running 2m test @ http://localhost:8080
+  8 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    17.17ms    3.83ms  80.43ms   83.28%
+    Req/Sec     6.95k   828.46    12.10k    81.01%
+  5537873 requests in 1.67m, 676.01MB read
+  Socket errors: connect 0, read 1043, write 0, timeout 0
+Requests/sec:  55325.72
+Transfer/sec:      6.75MB
+```
+CPU: 290% - 360% 内存：33m
+
+
+### 5. Rust actix web
+最近Rust很火，性能也很好，也那里对比一下:
+### Rust actix_web 1.0 Framework
+Run
+```shell
+$ cd hello-world/rust-actix-web-v1
+$ cargo run --release
+```
+Test
+```shell
+$ curl -i http://localhost:8080
+HTTP/1.1 200 OK
+content-length: 11
+content-type: text/plain; charset=utf-8
+date: Sat, 08 Feb 2020 07:45:41 GMT
+
+Hello world%
+```
+Pressure Test
+```shell
+$ wrk -d 100s -c 1000 -t 8 http://localhost:8080
+Running 2m test @ http://localhost:8080
+  8 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    13.46ms    2.66ms  51.33ms   85.82%
+    Req/Sec     8.89k     1.13k   13.72k    77.51%
+  7078597 requests in 1.67m, 864.09MB read
+  Socket errors: connect 0, read 1054, write 0, timeout 0
+Requests/sec:  70744.27
+Transfer/sec:      8.64MB
+```
+CPU: 200% - 230% 内存：72m
+
+
+### 6. Rust actix_web 2.0 Framework
+Run
+```shell
+$ cd hello-world/rust-actix-web-v2
+$ cargo run --release
+```
+Test
+```shell
+$ curl -i http://localhost:8080
+HTTP/1.1 200 OK
+content-length: 11
+content-type: text/plain; charset=utf-8
+date: Sat, 08 Feb 2020 08:37:31 GMT
+
+Hello world%
+```
+Pressure Test
+```shell
+$ wrk -d 100s -c 1000 -t 8 http://localhost:8080
+Running 2m test @ http://localhost:8080
+  8 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    13.92ms    3.26ms 102.39ms   81.81%
+    Req/Sec     8.66k     1.03k   12.01k    73.72%
+  6893954 requests in 1.67m, 841.55MB read
+  Socket errors: connect 0, read 1118, write 0, timeout 0
+Requests/sec:  68870.88
+Transfer/sec:      8.41MB
+```
+CPU: 170% - 230% 内存：53m
+
+## 7. 以上显示
+Name | CPU | Mem | QPS |
+|---|:---:|---|---|
+| [Go Gin](https://github.com/gin-gonic/gin)  | 260% - 330% | 30m | 55417 |
+| [Go Iris](https://github.com/kataras/iris) | 260% - 332% | 33m | 55542 |
+| [Go Echo](https://github.com/labstack/echo) | 260% - 330% | 30m | 54616 |
+| [Go Revel](https://github.com/revel) | |  |  |
+| [Go Buffalo](https://github.com/gobuffalo/buffalo) |  |  |  |
+| [Go Chi](https://github.com/go-chi/chi) | 290% - 340% | 28m | 55867 |
+| [Go Restful](https://github.com/emicklei/go-restful) | 290% - 360% | 33m | 55325 |
+| [Rust actix-web 1.0](https://github.com/actix/actix-web) | 200% - 230% | 72m | 70744 |
+| [Rust actix-web 2.0](https://github.com/actix/actix-web) | 170% - 230% | 53m | 68870 |
+
+以上数据仅供参考
+
+
+参考资料：
+Web Framework Benchmarks   
+https://www.techempower.com/benchmarks/#section=data-r18  
+Awesome Web Frameworks for Gophers  
+https://raw.githubusercontent.com/speedwheel/awesome-go-web-frameworks/master/README.md
+
+
 截取自https://github.com/speedwheel/awesome-go-web-frameworks/blob/master/README.md#popularity:
 
 [Go](https://golang.org) is a rapidly growing open source programming language designed for building simple, fast, and reliable software. Take a look [here](https://github.com/golang/go/wiki/GoUsers) to see which great companies use Go to power their services.
@@ -100,248 +348,3 @@ Great job by astaxie and kataras here, hopfully and the other frameworks will ca
 | Performance | ★★★★★ | ★★★ | ★★ | ★★★★★ | ★★★★★ | ★★★ |
 
 ```
-
-开始我们的Pressure Test
-## 环境：
-MacBook Pro (15-inch, 2017)
-CPU: 3.1 GHz Intel Core i7
-Mem: 16 GB 2133 MHz LPDDR3
-
-### Go gin Framework
-Run
-```shell
-$ go run hello-world/main_gin.go 
-```
-Test
-```shell
-$ curl -i http://localhost:8080
-HTTP/1.1 200 OK
-Date: Sat, 08 Feb 2020 07:48:12 GMT
-Content-Length: 11
-Content-Type: text/plain; charset=utf-8
-
-Hello World%
-```
-Pressure Test
-```shell
-$ wrk -d 100s -c 1000 -t 8 http://localhost:8080
-Running 2m test @ http://localhost:8080
-  8 threads and 1000 connections
-  Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    17.33ms    3.39ms  90.62ms   83.61%
-    Req/Sec     6.97k   773.90    12.75k    77.71%
-  5547468 requests in 1.67m, 677.18MB read
-  Socket errors: connect 0, read 848, write 8, timeout 0
-Requests/sec:  55417.42
-Transfer/sec:      6.76MB
-```
-CPU: 260% - 330% 内存: 30m
-
-
-
-### Go iris Framework
-Run
-```shell
-$ go run hello-world/main_iris.go 
-```
-Test
-```shell
-$ curl -i http://localhost:8080
-HTTP/1.1 200 OK
-Date: Sat, 08 Feb 2020 07:51:49 GMT
-Content-Length: 11
-Content-Type: text/plain; charset=utf-8
-
-Hello World%
-```
-Pressure Test
-```shell
-$ wrk -d 100s -c 1000 -t 8 http://localhost:8080
-Running 2m test @ http://localhost:8080
-  8 threads and 1000 connections
-  Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    17.24ms    3.53ms  68.91ms   83.17%
-    Req/Sec     6.98k   785.89    11.66k    78.38%
-  5558509 requests in 1.67m, 678.53MB read
-  Socket errors: connect 0, read 925, write 0, timeout 0
-Requests/sec:  55542.67
-Transfer/sec:      6.78MB
-```
-CPU: 260% - 332% 内存：33m
-
-### Go echo Framework
-Run
-```shell
-$ go run hello-world/main_echo.go 
-```
-Test
-```curl -i http://localhost:8080
-HTTP/1.1 200 OK
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 08 Feb 2020 07:55:32 GMT
-Content-Length: 11
-
-Hello World%
-```
-Pressure Test
-```shell
-$ wrk -d 100s -c 1000 -t 8 http://localhost:8080
-Running 2m test @ http://localhost:8080
-  8 threads and 1000 connections
-  Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    17.50ms    3.72ms 113.97ms   85.23%
-    Req/Sec     6.87k   835.97    11.97k    75.54%
-  5466944 requests in 1.67m, 667.35MB read
-  Socket errors: connect 0, read 915, write 0, timeout 0
-Requests/sec:  54616.08
-Transfer/sec:      6.67MB
-```
-CPU: 290% - 340% 内存： 29m
-
-### Go chi Framework
-Run
-```shell
-$ go run hello-world/main_chi.go 
-```
-Test
-```shell
-$ curl -i http://localhost:8080
-HTTP/1.1 200 OK
-Date: Sat, 08 Feb 2020 07:58:43 GMT
-Content-Length: 11
-Content-Type: text/plain; charset=utf-8
-
-Hello World%
-```
-Pressure Test
-```shell
-$ wrk -d 100s -c 1000 -t 8 http://localhost:8080
-Running 2m test @ http://localhost:8080
-  8 threads and 1000 connections
-  Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    17.13ms    3.34ms  78.01ms   84.38%
-    Req/Sec     7.02k   725.59    11.73k    80.36%
-  5590349 requests in 1.67m, 682.42MB read
-  Socket errors: connect 0, read 933, write 0, timeout 0
-Requests/sec:  55867.91
-Transfer/sec:      6.82MB
-```
-CPU:  内存: 28m
-
-### Go restful Framework
-Run
-```shell
-$ go run hello-world/main_restful.go 
-```
-Test
-```shell
-$ curl -i http://localhost:8080
-HTTP/1.1 200 OK
-Date: Sat, 08 Feb 2020 08:01:33 GMT
-Content-Length: 11
-Content-Type: text/plain; charset=utf-8
-
-Hello World%
-```
-Pressure Test
-```shell
-$ wrk -d 100s -c 1000 -t 8 http://localhost:8080
-Running 2m test @ http://localhost:8080
-  8 threads and 1000 connections
-  Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    17.17ms    3.83ms  80.43ms   83.28%
-    Req/Sec     6.95k   828.46    12.10k    81.01%
-  5537873 requests in 1.67m, 676.01MB read
-  Socket errors: connect 0, read 1043, write 0, timeout 0
-Requests/sec:  55325.72
-Transfer/sec:      6.75MB
-```
-CPU: 290% - 360% 内存：33m
-
-
-### Rust actix web
-最近Rust很火，性能也很好，也那里对比一下:
-### Rust actix_web 1.0 Framework
-Run
-```shell
-$ cd hello-world/rust-actix-web-v1
-$ cargo run --release
-```
-Test
-```shell
-$ curl -i http://localhost:8080
-HTTP/1.1 200 OK
-content-length: 11
-content-type: text/plain; charset=utf-8
-date: Sat, 08 Feb 2020 07:45:41 GMT
-
-Hello world%
-```
-Pressure Test
-```shell
-$ wrk -d 100s -c 1000 -t 8 http://localhost:8080
-Running 2m test @ http://localhost:8080
-  8 threads and 1000 connections
-  Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    13.46ms    2.66ms  51.33ms   85.82%
-    Req/Sec     8.89k     1.13k   13.72k    77.51%
-  7078597 requests in 1.67m, 864.09MB read
-  Socket errors: connect 0, read 1054, write 0, timeout 0
-Requests/sec:  70744.27
-Transfer/sec:      8.64MB
-```
-CPU: 200% - 230% 内存：72m
-
-
-### Rust actix_web 2.0 Framework
-Run
-```shell
-$ cd hello-world/rust-actix-web-v2
-$ cargo run --release
-```
-Test
-```shell
-$ curl -i http://localhost:8080
-HTTP/1.1 200 OK
-content-length: 11
-content-type: text/plain; charset=utf-8
-date: Sat, 08 Feb 2020 08:37:31 GMT
-
-Hello world%
-```
-Pressure Test
-```shell
-$ wrk -d 100s -c 1000 -t 8 http://localhost:8080
-Running 2m test @ http://localhost:8080
-  8 threads and 1000 connections
-  Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    13.92ms    3.26ms 102.39ms   81.81%
-    Req/Sec     8.66k     1.03k   12.01k    73.72%
-  6893954 requests in 1.67m, 841.55MB read
-  Socket errors: connect 0, read 1118, write 0, timeout 0
-Requests/sec:  68870.88
-Transfer/sec:      8.41MB
-```
-CPU: 170% - 230% 内存：53m
-
-## 以上显示
-Name | CPU | Mem | QPS |
-|---|:---:|---|---|
-| [Go Gin](https://github.com/gin-gonic/gin)  | 260% - 330% | 30m | 55417 |
-| [Go Iris](https://github.com/kataras/iris) | 260% - 332% | 33m | 55542 |
-| [Go Echo](https://github.com/labstack/echo) | 260% - 330% | 30m | 54616 |
-| [Go Revel](https://github.com/revel) | |  |  |
-| [Go Buffalo](https://github.com/gobuffalo/buffalo) |  |  |  |
-| [Go Chi](https://github.com/gobuffalo/buffalo) | 290% - 340% | 28m | 55867 |
-| [Go Restful](https://github.com/gobuffalo/buffalo) | 290% - 360% | 33m | 55325 |
-| [Rust actix-web 1.0](https://github.com/gobuffalo/buffalo) | 200% - 230% | 72m | 70744 |
-| [Rust actix-web 2.0](https://github.com/gobuffalo/buffalo) | 170% - 230% | 53m | 68870 |
-
-以上数据仅供参考
-
-
-参考资料：
-Web Framework Benchmarks 
-https://www.techempower.com/benchmarks/#section=data-r18
-Awesome Web Frameworks for Gophers  
-https://raw.githubusercontent.com/speedwheel/awesome-go-web-frameworks/master/README.md
