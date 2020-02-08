@@ -1,6 +1,7 @@
 # 对GO 主流框架 和 Rust的actix web进行Pressure Test对比
 
-开始我们的Pressure Test
+开始我们的Pressure Test,欢迎star
+
 ## 环境：
 MacBook Pro (15-inch, 2017)  
 CPU: 3.1 GHz Intel Core i7  
