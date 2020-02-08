@@ -241,14 +241,14 @@ Name | CPU | Mem | QPS |
 以上数据仅供参考
 
 
-参考资料：
-Web Framework Benchmarks   
+参考资料：  
+1. Web Framework Benchmarks   
 https://www.techempower.com/benchmarks/#section=data-r18  
-Awesome Web Frameworks for Gophers  
+2. Awesome Web Frameworks for Gophers  
 https://raw.githubusercontent.com/speedwheel/awesome-go-web-frameworks/master/README.md
 
 
-截取自https://github.com/speedwheel/awesome-go-web-frameworks/blob/master/README.md#popularity:
+3. https://github.com/speedwheel/awesome-go-web-frameworks/blob/master/README.md#popularity:
 
 [Go](https://golang.org) is a rapidly growing open source programming language designed for building simple, fast, and reliable software. Take a look [here](https://github.com/golang/go/wiki/GoUsers) to see which great companies use Go to power their services.
 
@@ -280,7 +280,7 @@ The repository contains the most detailed framework comparison that is out there
 * https://github.com/revel/revel
 * https://revel.github.io
 
-## Popularity(2020-02-10)
+4. Popularity(2020-02-10)
 
 > Sorted by the popularity (stars)
 
@@ -293,7 +293,7 @@ The repository contains the most detailed framework comparison that is out there
 | [Revel](https://github.com/revel) | 11,562 | 1.4k | 81 |  832 | 2011 | 2018-10-30 | [@revel](https://github.com/revel) |
 | [Buffalo](https://github.com/gobuffalo/buffalo) | 5,347 | 426 | 63 |  714 |  2014 | 2020-02-07 | [@markbates](https://github.com/markbates) |
 
-## Learning Curve
+5. Learning Curve
 
 Name | Examples | Reference | Real time support |
 |---|:---:|---|---|
@@ -306,7 +306,7 @@ Name | Examples | Reference | Real time support |
 
 Great job by astaxie and kataras here, hopfully and the other frameworks will catch up with more examples, at least for me, if I switch to a new framework, that's the most resourceful place to quickly grasp as much information as possible. An example it's like 1000 words.
 
-## Core Features
+6. Core Features
 
 > Sorted by the most to less featured
 
