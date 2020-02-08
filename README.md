@@ -1,14 +1,31 @@
 # 对GO 主流框架 和 Rust的actix web进行Pressure Test对比
 
-
-
 开始我们的Pressure Test
 ## 环境：
-MacBook Pro (15-inch, 2017)
-CPU: 3.1 GHz Intel Core i7
-Mem: 16 GB 2133 MHz LPDDR3
+MacBook Pro (15-inch, 2017)  
+CPU: 3.1 GHz Intel Core i7  
+Mem: 16 GB 2133 MHz LPDDR3  
+
+环境设置  
+ulimit -n 1048576
 
 ### 1. Go gin Framework
+```golang
+package main
+
+import (
+	"github.com/gin-gonic/gin"
+)
+
+func main() {
+	r := gin.New()
+	r.GET("/", func(ctx *gin.Context) {
+		ctx.Writer.Write([]byte("Hello World"))
+	})
+	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+}
+
+```
 Run
 ```shell
 $ go run hello-world/main_gin.go 
@@ -41,6 +58,22 @@ CPU: 260% - 330% 内存: 30m
 
 
 ### 2. Go iris Framework
+code 
+```golang
+package main
+
+import "github.com/kataras/iris/v12"
+
+func main() {
+	app := iris.New()
+	app.Get("/", func(ctx iris.Context) {
+		ctx.Write([]byte("Hello World"))
+	})
+
+	app.Run(iris.Addr(":8080"))
+}
+
+```
 Run
 ```shell
 $ go run hello-world/main_iris.go 
@@ -71,6 +104,26 @@ Transfer/sec:      6.78MB
 CPU: 260% - 332% 内存：33m
 
 ### 3. Go echo Framework
+code
+```golang
+// https://echo.labstack.com
+package main
+
+import (
+	"net/http"
+
+	"github.com/labstack/echo"
+)
+
+func main() {
+	e := echo.New()
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello World")
+	})
+	e.Start(":8080")
+}
+
+```
 Run
 ```shell
 $ go run hello-world/main_echo.go 
@@ -100,6 +153,26 @@ Transfer/sec:      6.67MB
 CPU: 290% - 340% 内存： 29m
 
 ### 3. Go chi Framework
+code
+```golang
+/// go chi framework
+package main
+
+import (
+  "net/http"
+  
+	"github.com/go-chi/chi"
+)
+
+func main() {
+	r := chi.NewRouter()
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Hello World"))
+	})
+	http.ListenAndServe(":8080", r)
+}
+
+```
 Run
 ```shell
 $ go run hello-world/main_chi.go 
@@ -130,6 +203,27 @@ Transfer/sec:      6.82MB
 CPU:  内存: 28m
 
 ### 4. Go restful Framework
+code
+```golang
+package main
+
+import (
+	"net/http"
+
+	"github.com/emicklei/go-restful"
+)
+
+func main() {
+	ws := new(restful.WebService)
+	ws.Route(ws.GET("/").To(hello))
+	restful.Add(ws)
+	http.ListenAndServe(":8080", nil)
+}
+func hello(req *restful.Request, resp *restful.Response) {
+	resp.Write([]byte("Hello World"))
+}
+
+```
 Run
 ```shell
 $ go run hello-world/main_restful.go 
@@ -163,6 +257,25 @@ CPU: 290% - 360% 内存：33m
 ### 5. Rust actix web
 最近Rust很火，性能也很好，也那里对比一下:
 ### Rust actix_web 1.0 Framework
+```shell
+$ cargo new rust-actix-web-v1
+$ cd rust-actix-web-v1
+```
+
+src/main.rs:
+```code
+use actix_web::{web, App, HttpServer};
+
+fn main() -> std::io::Result<()> {
+    HttpServer::new(|| {
+        App::new()
+            .service(web::resource("/").to(|| "Hello world"))
+    })
+    .bind("0.0.0.0:8080")?
+    .run()
+}
+
+```
 Run
 ```shell
 $ cd hello-world/rust-actix-web-v1
@@ -195,6 +308,27 @@ CPU: 200% - 230% 内存：72m
 
 
 ### 6. Rust actix_web 2.0 Framework
+```shell
+$ cargo new rust-actix-web-v2
+$ cd rust-actix-web-v2
+```
+src/main.rs:
+```code
+use actix_web::{get, App, HttpServer, Responder};
+
+#[get("/")]
+async fn index() -> impl Responder {
+    format!("Hello world")
+}
+
+#[actix_rt::main]
+async fn main() -> std::io::Result<()> {
+    HttpServer::new(|| App::new().service(index))
+        .bind("127.0.0.1:8080")?
+        .run()
+        .await
+}
+```
 Run
 ```shell
 $ cd hello-world/rust-actix-web-v2
